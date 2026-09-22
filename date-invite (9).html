@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Свидание? 💕</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-1:#fff0f5;
+    --bg-2:#ffe0ec;
+    --bg-3:#ffd1e0;
+    --card-bg:#ffffffcc;
+    --text-main:#5b2333;
+    --text-soft:#9c5169;
+    --pink-strong:#ff5c8a;
+    --pink-mid:#ff8fab;
+    --pink-soft:#ffc2d1;
+    --accent:#e63969;
+    --white:#ffffff;
+    --shadow: 0 20px 45px rgba(230,57,105,0.18);
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg-1:#2b0f1c;
+      --bg-2:#3a1526;
+      --bg-3:#4a1a30;
+      --card-bg:#3a1526e6;
+      --text-main:#ffe3ec;
+      --text-soft:#ffb8cd;
+      --pink-strong:#ff6f9c;
+      --pink-mid:#ff8fab;
+      --pink-soft:#7a2e47;
+      --accent:#ff5c8a;
+      --white:#2b0f1c;
+      --shadow: 0 20px 45px rgba(0,0,0,0.45);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg-1:#2b0f1c;
+    --bg-2:#3a1526;
+    --bg-3:#4a1a30;
+    --card-bg:#3a1526e6;
+    --text-main:#ffe3ec;
+    --text-soft:#ffb8cd;
+    --pink-strong:#ff6f9c;
+    --pink-mid:#ff8fab;
+    --pink-soft:#7a2e47;
+    --accent:#ff5c8a;
+    --white:#2b0f1c;
+    --shadow: 0 20px 45px rgba(0,0,0,0.45);
+  }
+  * { box-sizing: border-box; }
+  html, body{
+    height:100%;
+    margin:0;
+    scroll-padding-top: env(safe-area-inset-top, 0px);
+  }
+  body{
+    font-family:'Nunito', sans-serif;
+    background: radial-gradient(circle at 20% 20%, var(--bg-3), var(--bg-2) 45%, var(--bg-1) 100%);
+    color: var(--text-main);
+    min-height:100%;
+    overflow-x:hidden;
+    position:relative;
+  }
+  #musicToggle{
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 0px) + 14px);
+    right: 14px;
+    z-index: 100;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--white);
+    color: var(--accent);
+    border: 1.5px solid var(--pink-soft);
+    font-size: 1.2rem;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow: 0 8px 20px rgba(230,57,105,.25);
+  }
+
+  .hearts-layer{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    overflow:hidden;
+    z-index:1;
+  }
+  .heart{
+    position:absolute;
+    bottom:-10%;
+    font-size: 22px;
+    opacity:.75;
+    animation: floatUp linear infinite;
+    filter: drop-shadow(0 2px 4px rgba(230,57,105,0.25));
+  }
+  @keyframes floatUp{
+    0%{ transform: translateY(0) translateX(0) rotate(0deg); opacity:0; }
+    10%{ opacity:.8; }
+    100%{ transform: translateY(-115vh) translateX(var(--drift,20px)) rotate(360deg); opacity:0; }
+  }
+  .stage{
+    position:relative;
+    z-index:2;
+    min-height:100svh;
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 32px 18px;
+  }
+  .screen{
+    display:none;
+    width:100%;
+    max-width:480px;
+  }
+  .screen.active{ display:block; }
+
+  .card{
+    background: var(--card-bg);
+    backdrop-filter: blur(6px);
+    border-radius: 28px;
+    padding: 38px 26px 30px;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(255,255,255,0.5);
+    text-align:center;
+    position:relative;
+  }
+  .big-heart{
+    font-size: 42px;
+    margin-bottom: 6px;
+    display:inline-block;
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{ transform: scale(1); }
+    50%{ transform: scale(1.15); }
+  }
+  h1.question{
+    font-size: 1.7rem;
+    line-height:1.35;
+    margin: 6px 0 6px;
+    font-family:'Pacifico', cursive;
+    color: var(--text-main);
+    font-weight: 400;
+  }
+  h1.question.small{ font-size: 1.35rem; }
+  .subtitle{
+    color: var(--text-soft);
+    font-size: .95rem;
+    margin-bottom: 26px;
+  }
+  .hint-line{
+    min-height: 22px;
+    color: var(--accent);
+    font-weight: 700;
+    font-size: .95rem;
+    margin: 4px 0 22px;
+    transition: opacity .2s ease;
+  }
+  .btn-row{
+    display:flex;
+    gap: 18px;
+    justify-content:center;
+    align-items:center;
+    flex-wrap: wrap;
+    position: relative;
+    min-height: 70px;
+  }
+  button{
+    font-family:'Nunito', sans-serif;
+    border:none;
+    cursor:pointer;
+    border-radius: 999px;
+    font-weight: 800;
+    letter-spacing: .3px;
+  }
+  #yesBtn{
+    background: linear-gradient(135deg, var(--pink-strong), var(--accent));
+    color: #fff;
+    font-size: 1.25rem;
+    padding: 18px 40px;
+    box-shadow: 0 12px 28px rgba(230,57,105,0.4);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  #yesBtn:hover{ transform: translateY(-2px) scale(1.04); box-shadow: 0 16px 34px rgba(230,57,105,0.5); }
+  #yesBtn:active{ transform: scale(0.97); }
+
+  #noBtn{
+    background: var(--white);
+    color: var(--accent);
+    border: 2px solid var(--pink-soft);
+    font-size: .85rem;
+    padding: 10px 20px;
+    z-index: 50;
+    touch-action: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select:none;
+    -webkit-user-select:none;
+  }
+  #noBtn.escaping{
+    position: absolute;
+  }
+
+  /* --- choice list screens (place / food / coffee / alcohol) --- */
+  .choice-list{
+    display:flex;
+    flex-direction:column;
+    gap: 10px;
+    text-align:left;
+  }
+  .choice-btn{
+    display:flex;
+    align-items:center;
+    gap: 12px;
+    background: var(--white);
+    border: 1.5px solid var(--pink-soft);
+    color: var(--text-main);
+    padding: 13px 16px;
+    border-radius: 16px;
+    font-size: .95rem;
+    font-weight: 700;
+    text-align:left;
+    transition: transform .12s ease, background .12s ease, color .12s ease;
+  }
+  .choice-btn .emoji{ font-size: 1.15rem; }
+  .choice-btn:hover{ transform: translateX(2px); background: var(--pink-soft); }
+  .choice-btn.selected{
+    background: linear-gradient(135deg, var(--pink-strong), var(--accent));
+    color:#fff;
+    border-color: transparent;
+  }
+  .yesno-row{
+    display:flex;
+    gap: 16px;
+    justify-content:center;
+  }
+  .yesno-btn{
+    flex:1;
+    max-width: 160px;
+    background: var(--white);
+    border: 1.5px solid var(--pink-soft);
+    color: var(--text-main);
+    padding: 16px;
+    border-radius: 18px;
+    font-size: 1.05rem;
+  }
+  .yesno-btn.selected{
+    background: linear-gradient(135deg, var(--pink-strong), var(--accent));
+    color:#fff;
+    border-color: transparent;
+  }
+  .back-link{
+    display:inline-block;
+    margin-top: 20px;
+    color: var(--text-soft);
+    font-size: .82rem;
+    text-decoration: underline;
+    cursor:pointer;
+    background:none;
+    font-weight: 600;
+    padding: 4px 6px;
+  }
+  .other-input{
+    width:100%;
+    padding: 13px 16px;
+    border-radius: 16px;
+    border: 1.5px solid var(--pink-soft);
+    font-family:'Nunito', sans-serif;
+    font-size: .95rem;
+    color: var(--text-main);
+    background: var(--white);
+    margin-bottom: 16px;
+  }
+  .other-input:focus{ outline: 2px solid var(--pink-strong); }
+  #otherConfirmBtn{
+    width:100%;
+    background: linear-gradient(135deg, var(--pink-strong), var(--accent));
+    color:#fff;
+    font-size: 1rem;
+    padding: 14px;
+    box-shadow: 0 12px 28px rgba(230,57,105,0.35);
+  }
+
+  /* --- Date/time screen --- */
+  .calendar{
+    margin-top: 6px;
+  }
+  .cal-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom: 12px;
+    font-weight: 800;
+    color: var(--text-main);
+  }
+  .cal-nav{
+    background: var(--pink-soft);
+    color: var(--accent);
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+    font-size: 1.1rem;
+    line-height: 1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .cal-nav:disabled{ opacity:.35; cursor:default; }
+  .cal-grid{
+    display:grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  .cal-dow{
+    font-size: .72rem;
+    color: var(--text-soft);
+    text-align:center;
+    font-weight:700;
+    padding-bottom: 4px;
+  }
+  .cal-day{
+    aspect-ratio: 1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius: 12px;
+    font-size: .85rem;
+    font-weight:700;
+    color: var(--text-main);
+    background: transparent;
+    border: 1px solid transparent;
+  }
+  .cal-day.empty{ visibility:hidden; }
+  .cal-day.disabled{ color: var(--text-soft); opacity:.35; cursor:default; }
+  .cal-day.selectable:hover{ background: var(--pink-soft); }
+  .cal-day.selected{
+    background: linear-gradient(135deg, var(--pink-strong), var(--accent));
+    color:#fff;
+  }
+
+  .section-label{
+    text-align:left;
+    font-weight: 800;
+    color: var(--text-main);
+    font-size: .85rem;
+    margin: 22px 0 10px;
+  }
+  .time-carousel-wrap{
+    display:flex;
+    align-items:center;
+    gap: 8px;
+  }
+  .carousel-arrow{
+    flex: 0 0 auto;
+    background: var(--pink-soft);
+    color: var(--accent);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    font-size: 1.2rem;
+    line-height: 1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .time-carousel{
+    flex: 1;
+    display:flex;
+    gap: 10px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: calc(50% - 32px);
+    padding-inline: calc(50% - 32px);
+    padding-block: 6px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .time-carousel::-webkit-scrollbar{ display:none; }
+  .time-item{
+    flex: 0 0 auto;
+    scroll-snap-align: center;
+    min-width: 64px;
+    text-align:center;
+    padding: 13px 6px;
+    border-radius: 14px;
+    background: var(--white);
+    border: 1.5px solid var(--pink-soft);
+    color: var(--text-main);
+    font-weight: 700;
+    font-size: .95rem;
+    opacity: .5;
+    transform: scale(.88);
+    transition: transform .15s ease, background .15s ease, color .15s ease, opacity .15s ease, border-color .15s ease;
+    cursor: pointer;
+    -webkit-user-select:none;
+    user-select:none;
+  }
+  .time-item.active{
+    background: linear-gradient(135deg, var(--pink-strong), var(--accent));
+    color:#fff;
+    border-color: transparent;
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  .time-selected-label{
+    text-align:center;
+    margin-top: 10px;
+    font-weight: 800;
+    color: var(--accent);
+    font-size: 1.05rem;
+    min-height: 24px;
+  }
+
+  #submitBtn{
+    margin-top: 26px;
+    width:100%;
+    background: linear-gradient(135deg, var(--pink-strong), var(--accent));
+    color:#fff;
+    font-size: 1.05rem;
+    padding: 15px;
+    box-shadow: 0 12px 28px rgba(230,57,105,0.35);
+    opacity:.4;
+    pointer-events:none;
+    transition: opacity .25s ease, transform .15s ease;
+  }
+  #submitBtn.ready{ opacity:1; pointer-events:auto; }
+  #submitBtn:active{ transform: scale(0.98); }
+  #submitBtn:disabled{ opacity:.6; pointer-events:none; }
+
+  .chosen-summary{
+    margin-top: 14px;
+    font-size: .85rem;
+    color: var(--text-soft);
+    min-height: 18px;
+  }
+
+  /* --- Final screen --- */
+  .final-emoji{
+    font-size: 58px;
+    margin-bottom: 10px;
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  .final-title{
+    font-family:'Pacifico', cursive;
+    font-size: 2rem;
+    color: var(--accent);
+    margin: 4px 0 10px;
+  }
+  .final-detail{
+    color: var(--text-main);
+    font-weight:700;
+    margin-bottom: 22px;
+    line-height: 1.9;
+  }
+  .mail-fallback{
+    display:inline-block;
+    margin-top: 6px;
+    color: var(--text-soft);
+    font-size: .82rem;
+    text-decoration: underline;
+  }
+
+  @media (max-width: 380px){
+    h1.question{ font-size: 1.45rem; }
+    .card{ padding: 30px 18px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hearts-layer" id="heartsLayer"></div>
+
+<!-- Фоновая музыка: положи файл music.mp3 рядом с этим index.html в репозитории -->
+<audio id="bgMusic" src="music.mp3" loop preload="auto"></audio>
+<button id="musicToggle" type="button" aria-label="Музыка">🔇</button>
+
+<div class="stage">
+
+  <!-- SCREEN 1: THE QUESTION -->
+  <div class="screen active" id="screen-question">
+    <div class="card">
+      <div class="big-heart">💖</div>
+      <h1 class="question">Пойдёшь со мной<br>на свидание?</h1>
+      <div class="subtitle">думай не долго, я жду ответа с 💐</div>
+      <div class="hint-line" id="hintLine">&nbsp;</div>
+      <div class="btn-row">
+        <button id="yesBtn">Да 💘</button>
+        <button id="noBtn">Нет</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: PLACE PREFERENCE -->
+  <div class="screen" id="screen-place">
+    <div class="card">
+      <div class="big-heart">📍</div>
+      <h1 class="question small">Где бы ты хотела<br>провести время?</h1>
+      <div class="subtitle">выбери, что больше по душе</div>
+      <div class="choice-list" id="placeList"></div>
+    </div>
+  </div>
+
+  <!-- SCREEN 2a: FOOD PREFERENCE (if restaurant) -->
+  <div class="screen" id="screen-food">
+    <div class="card">
+      <div class="big-heart">🍽️</div>
+      <h1 class="question small">Какую кухню<br>предпочитаешь?</h1>
+      <div class="subtitle">выбери, чего сейчас хочется</div>
+      <div class="choice-list" id="foodList"></div>
+      <button class="back-link" id="backFromFood" type="button">← назад</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 2b: ALCOHOL -->
+  <div class="screen" id="screen-alcohol">
+    <div class="card">
+      <div class="big-heart">🥂</div>
+      <h1 class="question small">Не против немного<br>вина или коктейль?</h1>
+      <div class="subtitle">просто да или нет</div>
+      <div class="yesno-row">
+        <button class="yesno-btn" id="alcoholYes" type="button">Да 🍷</button>
+        <button class="yesno-btn" id="alcoholNo" type="button">Нет 🙅‍♀️</button>
+      </div>
+      <button class="back-link" id="backFromAlcohol" type="button">← назад</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 2c: COFFEE PLACE (if coffee) -->
+  <div class="screen" id="screen-coffee">
+    <div class="card">
+      <div class="big-heart">☕</div>
+      <h1 class="question small">В какую кофейню<br>сходим?</h1>
+      <div class="subtitle">выбери любимую</div>
+      <div class="choice-list" id="coffeeList"></div>
+      <button class="back-link" id="backFromCoffee" type="button">← назад</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: DATE & TIME -->
+  <div class="screen" id="screen-datetime">
+    <div class="card">
+      <div class="big-heart">📅</div>
+      <h1 class="question small">В какой день и время<br>тебе удобно?</h1>
+      <div class="subtitle">выбери дату и время — и я уже считаю минуты</div>
+
+      <div class="calendar">
+        <div class="cal-header">
+          <button class="cal-nav" id="prevMonth" type="button">‹</button>
+          <span id="calMonthLabel"></span>
+          <button class="cal-nav" id="nextMonth" type="button">›</button>
+        </div>
+        <div class="cal-grid" id="calDowRow"></div>
+        <div class="cal-grid" id="calDaysGrid"></div>
+      </div>
+
+      <div class="section-label">Время</div>
+      <div class="time-carousel-wrap">
+        <button class="carousel-arrow" id="timePrev" type="button">‹</button>
+        <div class="time-carousel" id="timeCarousel"></div>
+        <button class="carousel-arrow" id="timeNext" type="button">›</button>
+      </div>
+      <div class="time-selected-label" id="timeSelectedLabel">&nbsp;</div>
+
+      <div class="chosen-summary" id="chosenSummary">&nbsp;</div>
+
+      <button id="submitBtn" type="button">Отправить 💌</button>
+      <button class="back-link" id="backFromDatetime" type="button">← назад</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 4: FINAL -->
+  <div class="screen" id="screen-final">
+    <div class="card">
+      <div class="final-emoji">🥂💕</div>
+      <div class="final-title">До встречи!</div>
+      <div class="final-detail" id="finalDetail"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ======================= НАСТРОЙКИ (заполните под себя) =======================
+
+  ФОНОВАЯ МУЗЫКА:
+  Из-за авторских прав я не могу вшить сам аудиофайл в код. Но именно эта версия
+  ("Dear Katara" / "Avatar's Love" в стиле lofi hip-hop от Vital Wave) раздаётся
+  автором бесплатно (формат "плати сколько хочешь", можно 0$):
+  https://vitalwave.gumroad.com/l/AvatarsLove
+  Скачай mp3, переименуй в music.mp3 и положи в тот же репозиторий на GitHub,
+  рядом с index.html (тем же способом, что и сам сайт — Add file → Upload files).
+  Музыка начнёт играть тихо на фоне после первого касания экрана (так требуют
+  браузеры — автовоспроизведение со звуком без действия пользователя запрещено),
+  кнопка 🎵 в углу — вкл/выкл.
+================================================================================ */
+
+/* ======================= НАСТРОЙКИ (заполните под себя) =======================
+
+  ОТПРАВКА ОТВЕТА ЧЕРЕЗ TELEGRAM-БОТА:
+  1) В Telegram найдите @BotFather → отправьте /newbot → придумайте имя и username бота.
+     В ответ BotFather пришлёт токен вида "123456789:AAHk...xyz" — вставьте его в telegramBotToken.
+  2) Найдите своего свежесозданного бота по его username и нажмите "Start" (отправьте ему любое сообщение) —
+     это нужно один раз, чтобы бот "увидел" ваш чат.
+  3) Откройте в браузере: https://api.telegram.org/bot<ВАШ_ТОКЕН>/getUpdates
+     (вместо <ВАШ_ТОКЕН> — токен из шага 1). В ответе найдите "chat":{"id": ЧИСЛО — это ваш chat_id,
+     вставьте его в telegramChatId.
+  4) Готово — при отправке ответ придёт вам прямо в Telegram от вашего бота.
+
+  Замечание по безопасности: токен бота виден в исходном коде страницы (это обычный статический сайт).
+  Бот не имеет доступа ни к чему, кроме отправки сообщений в чаты, которые сами ему написали, — риска
+  для личных данных это не несёт, но не переиспользуйте этот токен в других серьёзных ботах.
+
+  Если Telegram не настроен — на финальном экране всё равно будет кнопка "Скопировать ответ",
+  чтобы вручную переслать его в любой мессенджер.
+================================================================================ */
+const CONFIG = {
+  telegramBotToken: "8878110587:AAE6qScj8tK6oC3dVQOQgQSw5lRJop6cGSs", // например: "123456789:AAHk-exampleTokenxxxxxxxxxxxxxxxxx"
+  telegramChatId: "7036148587",   // например: "987654321"
+  askerName: "" // необязательно, подставится в текст сообщения
+};
+
+/* ---------------- floating hearts background ---------------- */
+(function heartsBg(){
+  const layer = document.getElementById('heartsLayer');
+  const emojis = ['💗','💕','💖','💓','❤️','💞'];
+  const count = window.innerWidth < 480 ? 14 : 22;
+  for(let i=0;i<count;i++){
+    const el = document.createElement('div');
+    el.className = 'heart';
+    el.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+    const left = Math.random()*100;
+    const dur = 9 + Math.random()*10;
+    const delay = Math.random()*12;
+    const size = 14 + Math.random()*18;
+    const drift = (Math.random()*80 - 40) + 'px';
+    el.style.left = left + 'vw';
+    el.style.fontSize = size + 'px';
+    el.style.animationDuration = dur + 's';
+    el.style.animationDelay = delay + 's';
+    el.style.setProperty('--drift', drift);
+    layer.appendChild(el);
+  }
+})();
+
+/* ---------------- фоновая музыка (всегда играет, без выключения) ---------------- */
+const bgMusic = document.getElementById('bgMusic');
+const musicToggle = document.getElementById('musicToggle');
+let isPlaying = false;
+
+function playMusic(){
+  if(isPlaying) return;
+  bgMusic.volume = 0.5;
+  bgMusic.play().then(function(){
+    isPlaying = true;
+    musicToggle.textContent = '🎵';
+  }).catch(function(err){
+    isPlaying = false;
+    musicToggle.textContent = '🔇';
+    console.warn('Не удалось запустить музыку:', err);
+  });
+}
+
+// кнопка теперь только индикатор + подстраховка на случай, если автозапуск не удался —
+// выключить музыку ей нельзя, только (пере)запустить
+musicToggle.addEventListener('click', function(e){
+  e.stopPropagation();
+  playMusic();
+});
+
+// пробуем запустить сразу при загрузке страницы (сработает не везде — браузеры часто
+// блокируют автовоспроизведение без действия пользователя)
+playMusic();
+
+// подстраховка: запускаем по самому первому касанию/клику где угодно на странице
+['click', 'pointerdown', 'touchstart', 'keydown'].forEach(function(evt){
+  document.addEventListener(evt, function firstInteraction(){
+    playMusic();
+  }, { capture: true });
+});
+
+// если музыка вдруг остановилась сама по себе (например, браузер поставил на паузу
+// при сворачивании вкладки) — пробуем возобновить, как только страница снова активна
+document.addEventListener('visibilitychange', function(){
+  if(document.visibilityState === 'visible'){
+    isPlaying = !bgMusic.paused;
+    if(!isPlaying) playMusic();
+  }
+});
+bgMusic.addEventListener('pause', function(){
+  isPlaying = false;
+  musicToggle.textContent = '🔇';
+});
+bgMusic.addEventListener('playing', function(){
+  isPlaying = true;
+  musicToggle.textContent = '🎵';
+});
+
+/* ---------------- screens ---------------- */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  window.scrollTo(0,0);
+  updateBackButtons();
+}
+
+/* ---------------- navigation history (для кнопки "назад") ---------------- */
+let screenStack = ['question'];
+function goTo(id){
+  screenStack.push(id);
+  showScreen(id);
+}
+function goBack(){
+  if(screenStack.length <= 1) return;
+  screenStack.pop();
+  const prev = screenStack[screenStack.length - 1];
+  showScreen(prev);
+}
+function updateBackButtons(){
+  const canGoBack = screenStack.length > 1;
+  document.querySelectorAll('.back-link').forEach(function(btn){
+    btn.style.visibility = canGoBack ? 'visible' : 'hidden';
+  });
+}
+
+/* ---------------- answers store ---------------- */
+const answers = {
+  place: null,
+  food: null,
+  alcohol: null,
+  coffeePlace: null,
+  date: null,
+  time: null
+};
+
+/* ---------------- "Нет" escaping button ---------------- */
+const noBtn = document.getElementById('noBtn');
+const yesBtn = document.getElementById('yesBtn');
+const hintLine = document.getElementById('hintLine');
+const noCard = document.querySelector('#screen-question .card');
+const noMessages = [
+  "Ой, не поймала 😅",
+  "Не-не-не 🙅‍♀️",
+  "Даже не пытайся",
+  "Подумай ещё разок 🥺",
+  "Я быстрее, чем кажется",
+  "Ну пожалуйста, не так 😭",
+  "Может всё-таки «Да»?",
+  "Упорная... мне нравится",
+  "Последний шанс на «Нет»... шутка",
+  "Сдавайся уже 💗"
+];
+let dodgeCount = 0;
+let started = false;
+
+// Случайная точка СТРОГО внутри карточки (квадрата), с отступом от краёв,
+// и подальше от кнопки "Да", чтобы туда случайно не попасть пальцем
+function randomPointInCard(w, h){
+  const pad = 12;
+  const maxX = Math.max(pad, noCard.clientWidth - w - pad);
+  const maxY = Math.max(pad, noCard.clientHeight - h - pad);
+
+  // зона кнопки "Да" внутри координат карточки, с запасом (буфером) вокруг неё
+  const cardRect = noCard.getBoundingClientRect();
+  const yesRect = yesBtn.getBoundingClientRect();
+  const buffer = 26;
+  const forbidden = {
+    left: (yesRect.left - cardRect.left) - buffer,
+    right: (yesRect.right - cardRect.left) + buffer,
+    top: (yesRect.top - cardRect.top) - buffer,
+    bottom: (yesRect.bottom - cardRect.top) + buffer
+  };
+
+  function overlapsYes(x, y){
+    return x < forbidden.right && (x + w) > forbidden.left &&
+           y < forbidden.bottom && (y + h) > forbidden.top;
+  }
+
+  let point;
+  for(let i=0; i<20; i++){
+    const x = pad + Math.random()*(maxX-pad);
+    const y = pad + Math.random()*(maxY-pad);
+    if(!overlapsYes(x, y)){ point = { x, y }; break; }
+  }
+  if(!point){
+    // на крайний случай — верхний левый угол карточки, туда "Да" обычно не дотягивается
+    point = { x: pad, y: pad };
+  }
+  return point;
+}
+
+function dodge(){
+  if(!started){
+    const cardRect = noCard.getBoundingClientRect();
+    const r = noBtn.getBoundingClientRect();
+    noCard.appendChild(noBtn); // переносим кнопку внутрь карточки, чтобы позиционировать относительно неё
+    noBtn.classList.add('escaping');
+    noBtn.style.left = (r.left - cardRect.left) + 'px';
+    noBtn.style.top = (r.top - cardRect.top) + 'px';
+    started = true;
+    void noBtn.offsetWidth;
+  }
+  const w = noBtn.offsetWidth, h = noBtn.offsetHeight;
+
+  noBtn.style.transition = 'left .25s ease, top .25s ease';
+  const point = randomPointInCard(w, h);
+  noBtn.style.left = point.x + 'px';
+  noBtn.style.top = point.y + 'px';
+
+  dodgeCount++;
+  hintLine.textContent = noMessages[Math.min(dodgeCount-1, noMessages.length-1)];
+  hintLine.style.opacity = 0;
+  requestAnimationFrame(()=>{ hintLine.style.transition='opacity .2s ease'; hintLine.style.opacity = 1; });
+}
+
+// Мышь: убегает при наведении, ещё до клика
+noBtn.addEventListener('pointerenter', function(e){
+  if(e.pointerType === 'mouse') dodge();
+});
+// Тач/перо: убегает в момент касания (раньше, чем сработает click)
+noBtn.addEventListener('pointerdown', function(e){
+  if(e.pointerType !== 'mouse'){
+    e.preventDefault();
+    dodge();
+  }
+});
+// Подстраховка на случай, если ни один из способов выше не сработал в конкретном браузере
+noBtn.addEventListener('click', function(e){ e.preventDefault(); dodge(); });
+window.addEventListener('resize', function(){
+  if(started){
+    const w = noBtn.offsetWidth, h = noBtn.offsetHeight;
+    const maxLeft = Math.max(12, noCard.clientWidth - w - 12);
+    const maxTop = Math.max(12, noCard.clientHeight - h - 12);
+    noBtn.style.left = Math.min(parseFloat(noBtn.style.left)||0, maxLeft) + 'px';
+    noBtn.style.top = Math.min(parseFloat(noBtn.style.top)||0, maxTop) + 'px';
+  }
+});
+
+yesBtn.addEventListener('click', function(){
+  goTo('place');
+});
+document.getElementById('backFromAlcohol').addEventListener('click', goBack);
+document.getElementById('backFromDatetime').addEventListener('click', goBack);
+
+/* ---------------- PLACE screen ---------------- */
+const placeOptions = [
+  { label: 'Ресторан', emoji: '🍽️' },
+  { label: 'Попить кофе', emoji: '☕' },
+  { label: 'Прогуляться по парку (или городу)', emoji: '🌳' },
+  { label: 'Покататься по городу', emoji: '🚗' },
+  { label: 'На Медео', emoji: '⛰️' },
+  { label: 'На Шымбулак', emoji: '🚡' }
+];
+const placeList = document.getElementById('placeList');
+placeOptions.forEach(opt=>{
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'choice-btn';
+  btn.innerHTML = '<span class="emoji">' + opt.emoji + '</span><span>' + opt.label + '</span>';
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('#placeList .choice-btn').forEach(b=>b.classList.remove('selected'));
+    btn.classList.add('selected');
+    answers.place = opt.label;
+    if(opt.label === 'Ресторан'){
+      goTo('food');
+    } else if(opt.label === 'Попить кофе'){
+      goTo('coffee');
+    } else {
+      goTo('datetime');
+      buildCalendar();
+        initTimeCarousel();
+    }
+  });
+  placeList.appendChild(btn);
+});
+
+/* ---------------- FOOD screen ---------------- */
+const foodOptions = [
+  { label: 'Стейки', emoji: '🥩' },
+  { label: 'Суши', emoji: '🍣' },
+  { label: 'Итальянская кухня', emoji: '🍝' },
+  { label: 'Азиатская кухня', emoji: '🍜' },
+  { label: 'Грузинская кухня', emoji: '🥟' }
+];
+const foodList = document.getElementById('foodList');
+foodOptions.forEach(opt=>{
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'choice-btn';
+  btn.innerHTML = '<span class="emoji">' + opt.emoji + '</span><span>' + opt.label + '</span>';
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('#foodList .choice-btn').forEach(b=>b.classList.remove('selected'));
+    btn.classList.add('selected');
+    answers.food = opt.label;
+    goTo('alcohol');
+  });
+  foodList.appendChild(btn);
+});
+document.getElementById('backFromFood').addEventListener('click', goBack);
+
+/* ---------------- ALCOHOL screen ---------------- */
+document.getElementById('alcoholYes').addEventListener('click', function(){
+  answers.alcohol = 'Да';
+  document.getElementById('alcoholYes').classList.add('selected');
+  document.getElementById('alcoholNo').classList.remove('selected');
+  goTo('datetime');
+  buildCalendar();
+        initTimeCarousel();
+});
+document.getElementById('alcoholNo').addEventListener('click', function(){
+  answers.alcohol = 'Нет';
+  document.getElementById('alcoholNo').classList.add('selected');
+  document.getElementById('alcoholYes').classList.remove('selected');
+  goTo('datetime');
+  buildCalendar();
+        initTimeCarousel();
+});
+
+/* ---------------- COFFEE screen ---------------- */
+const coffeeOptions = [
+  { label: 'Starbucks', emoji: '☕' },
+  { label: 'Неделька', emoji: '☕' },
+  { label: 'Кофебум', emoji: '☕' },
+  { label: 'Blend', emoji: '☕' }
+];
+const coffeeList = document.getElementById('coffeeList');
+coffeeOptions.forEach(opt=>{
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'choice-btn';
+  btn.innerHTML = '<span class="emoji">' + opt.emoji + '</span><span>' + opt.label + '</span>';
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('#coffeeList .choice-btn').forEach(b=>b.classList.remove('selected'));
+    btn.classList.add('selected');
+    answers.coffeePlace = opt.label;
+    goTo('datetime');
+    buildCalendar();
+        initTimeCarousel();
+  });
+  coffeeList.appendChild(btn);
+});
+document.getElementById('backFromCoffee').addEventListener('click', goBack);
+
+/* ---------------- calendar ---------------- */
+const monthLabel = document.getElementById('calMonthLabel');
+const dowRow = document.getElementById('calDowRow');
+const daysGrid = document.getElementById('calDaysGrid');
+const prevBtn = document.getElementById('prevMonth');
+const nextBtn = document.getElementById('nextMonth');
+
+const today = new Date(); today.setHours(0,0,0,0);
+let viewYear = today.getFullYear();
+let viewMonth = today.getMonth();
+let selectedDate = null;
+let selectedTime = null;
+let calendarBuilt = false;
+
+const monthNames = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+const dowNames = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+
+function buildCalendar(){
+  if(calendarBuilt) return;
+  calendarBuilt = true;
+  dowRow.innerHTML = '';
+  dowNames.forEach(d=>{
+    const el = document.createElement('div');
+    el.className = 'cal-dow';
+    el.textContent = d;
+    dowRow.appendChild(el);
+  });
+  renderMonth();
+}
+
+function renderMonth(){
+  monthLabel.textContent = monthNames[viewMonth] + ' ' + viewYear;
+  daysGrid.innerHTML = '';
+
+  const firstOfMonth = new Date(viewYear, viewMonth, 1);
+  let startOffset = firstOfMonth.getDay() - 1;
+  if(startOffset < 0) startOffset = 6;
+  const daysInMonth = new Date(viewYear, viewMonth+1, 0).getDate();
+
+  for(let i=0;i<startOffset;i++){
+    const empty = document.createElement('div');
+    empty.className = 'cal-day empty';
+    daysGrid.appendChild(empty);
+  }
+  for(let d=1; d<=daysInMonth; d++){
+    const cellDate = new Date(viewYear, viewMonth, d);
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'cal-day';
+    btn.textContent = d;
+    if(cellDate < today){
+      btn.classList.add('disabled');
+      btn.disabled = true;
+    } else {
+      btn.classList.add('selectable');
+      if(selectedDate && cellDate.getTime() === selectedDate.getTime()){
+        btn.classList.add('selected');
+      }
+      btn.addEventListener('click', function(){
+        selectedDate = cellDate;
+        renderMonth();
+        updateSummary();
+      });
+    }
+    daysGrid.appendChild(btn);
+  }
+
+  const isCurrentMonth = (viewYear === today.getFullYear() && viewMonth === today.getMonth());
+  prevBtn.disabled = isCurrentMonth;
+}
+
+prevBtn.addEventListener('click', function(){
+  viewMonth--;
+  if(viewMonth < 0){ viewMonth = 11; viewYear--; }
+  renderMonth();
+});
+nextBtn.addEventListener('click', function(){
+  viewMonth++;
+  if(viewMonth > 11){ viewMonth = 0; viewYear++; }
+  renderMonth();
+});
+
+/* ---------------- time carousel (каждый час) ---------------- */
+const timeCarousel = document.getElementById('timeCarousel');
+const timeSelectedLabel = document.getElementById('timeSelectedLabel');
+const hoursList = [];
+for(let h=0; h<24; h++){ hoursList.push(String(h).padStart(2,'0') + ':00'); }
+
+hoursList.forEach(function(t){
+  const item = document.createElement('div');
+  item.className = 'time-item';
+  item.textContent = t;
+  item.dataset.time = t;
+  item.addEventListener('click', function(){
+    item.scrollIntoView({ behavior:'smooth', inline:'center', block:'nearest' });
+  });
+  timeCarousel.appendChild(item);
+});
+
+let timeScrollDebounce = null;
+function updateActiveTimeFromScroll(){
+  const items = timeCarousel.querySelectorAll('.time-item');
+  const containerRect = timeCarousel.getBoundingClientRect();
+  const centerX = containerRect.left + containerRect.width / 2;
+  let closest = null, closestDist = Infinity;
+  items.forEach(function(item){
+    const r = item.getBoundingClientRect();
+    const itemCenter = r.left + r.width / 2;
+    const dist = Math.abs(itemCenter - centerX);
+    if(dist < closestDist){ closestDist = dist; closest = item; }
+  });
+  items.forEach(function(i){ i.classList.remove('active'); });
+  if(closest){
+    closest.classList.add('active');
+    selectedTime = closest.dataset.time;
+    timeSelectedLabel.textContent = selectedTime;
+    updateSummary();
+  }
+}
+timeCarousel.addEventListener('scroll', function(){
+  clearTimeout(timeScrollDebounce);
+  timeScrollDebounce = setTimeout(updateActiveTimeFromScroll, 90);
+});
+document.getElementById('timePrev').addEventListener('click', function(){
+  timeCarousel.scrollBy({ left: -74, behavior: 'smooth' });
+});
+document.getElementById('timeNext').addEventListener('click', function(){
+  timeCarousel.scrollBy({ left: 74, behavior: 'smooth' });
+});
+
+let timeCarouselInit = false;
+function initTimeCarousel(){
+  if(timeCarouselInit) return;
+  timeCarouselInit = true;
+  requestAnimationFrame(function(){
+    const defaultItem = timeCarousel.querySelector('[data-time="18:00"]') || timeCarousel.children[12];
+    if(defaultItem) defaultItem.scrollIntoView({ inline:'center', block:'nearest' });
+    setTimeout(updateActiveTimeFromScroll, 60);
+  });
+}
+
+/* ---------------- summary + submit ---------------- */
+const chosenSummary = document.getElementById('chosenSummary');
+const submitBtn = document.getElementById('submitBtn');
+let copyText = '';
+
+function formatDate(d){
+  return d.getDate() + ' ' + monthNames[d.getMonth()].toLowerCase() + ' ' + d.getFullYear();
+}
+
+function updateSummary(){
+  if(selectedDate && selectedTime){
+    chosenSummary.textContent = 'Выбрано: ' + formatDate(selectedDate) + ', в ' + selectedTime;
+    submitBtn.classList.add('ready');
+  } else if(selectedDate){
+    chosenSummary.textContent = 'Дата выбрана — теперь выбери время';
+    submitBtn.classList.remove('ready');
+  } else {
+    chosenSummary.textContent = '\u00A0';
+    submitBtn.classList.remove('ready');
+  }
+}
+
+function buildSummaryLines(dateStr, timeStr){
+  const lines = [];
+  lines.push('Место: ' + answers.place);
+  if(answers.place === 'Ресторан'){
+    lines.push('Кухня: ' + answers.food);
+    lines.push('Алкоголь: ' + answers.alcohol);
+  }
+  if(answers.place === 'Попить кофе'){
+    lines.push('Кофейня: ' + answers.coffeePlace);
+  }
+  lines.push('Дата: ' + dateStr);
+  lines.push('Время: ' + timeStr);
+  return lines;
+}
+
+function trySendToTelegram(text){
+  if(!CONFIG.telegramBotToken || !CONFIG.telegramChatId){
+    return Promise.resolve(false);
+  }
+  const url = 'https://api.telegram.org/bot' + CONFIG.telegramBotToken + '/sendMessage';
+  return fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chat_id: CONFIG.telegramChatId, text: text })
+  }).then(function(r){ return r.ok; }).catch(function(){ return false; });
+}
+
+submitBtn.addEventListener('click', function(){
+  if(!selectedDate || !selectedTime) return;
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Отправляю... 💌';
+
+  const dateStr = formatDate(selectedDate);
+  answers.date = dateStr;
+  answers.time = selectedTime;
+
+  const lines = buildSummaryLines(dateStr, selectedTime);
+  const messageText = '💌 Новый ответ на приглашение' + (CONFIG.askerName ? ' (' + CONFIG.askerName + ')' : '') + '!\n\nЯ согласна на свидание 💕\n\n' + lines.join('\n');
+  copyText = messageText;
+
+  trySendToTelegram(messageText).finally(function(){
+    document.getElementById('finalDetail').innerHTML = lines.join('<br>');
+    goTo('final');
+  });
+});
+</script>
+</body>
+</html>
